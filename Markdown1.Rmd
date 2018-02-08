@@ -1,0 +1,50 @@
+---
+title: "My first markdown document"
+author: "Dominick Weakley"
+
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readr)
+library(dplyr)
+library(ggplot2)
+```
+
+## Reading the data
+
+ Data on students favorite restraunts, visits the restaunt, etc.  
+```{r}
+class <- read_csv("C:\\Users\\dw2fj\\Desktop\\fav_restaurants.csv")
+class
+```
+
+
+## Plotting the data
+
+Plot shows each students meal cost in relation to the cost of the meal
+
+
+``` {r}
+firstgraph <- ggplot(class,aes(cost_per_person,location))+geom_point()
+firstgraph
+```
+
+
+Plot shows each students favorite dish in relation with its' cost
+
+```{r}
+secondgraph <- ggplot(class,aes(fav_dish,cost_per_person))+geom_point()
+secondgraph
+```
+
+Plot shows each students favorite restraunt location in relation to the students' yearly vists  
+
+```{r}
+thirdgraph <- ggplot(class,aes(location,yearly_visits))+geom_point()
+thirdgraph
+```
