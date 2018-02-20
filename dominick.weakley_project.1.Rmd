@@ -1,0 +1,94 @@
+---
+title: "Making a Popular Facebook Post"
+author: "Dominick Weakley"
+output: html_notebook
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+```
+
+# Making a Popular Facebook Post
+
+## Overview
+
+Social media has begun to dominate our free time and to a certain extent our lives.  Teenagers admit to spending up to 9 hours a day on social media platforms like Twitter, Facebook, and Instagram.  In these three hours, teens are posting, linking, and viewing an immense number of different posts or tweets. Due to the mass popularity of Facebook, any post could go viral and spread. While a majority of posts that populate newsfeeds are based on personal interests, many are also popular posts liked/shared by friends. My project will provide statistics on the first 75 items in my personal newsfeed. The goal of my project is to determine what factors make the posts in my newsfeed popular or not.  I will be determining this based on my different factors like the time it was posted, who posted, and the type of post. 
+
+## Data dictionary
+
+Here is a data dictionary for the Making a Popular Facebook Post dataset:
+
+
+- **type**: A categorical variable describing the type of media used in the online post. 
+Options are
+"video"
+"writing"
+"photo"
+- **who**: A character variable giving the official name of the person or page that posted.
+- **likes**: A numeric variable giving the exact number of likes a post received at the time is viewed.
+- **top_reaction**: A categorical variable giving the top used reaction used by others to react to the post at the time.     Options are
+"like"
+"love"
+"none"
+"haha"
+"angry"
+"wow"
+"sad"
+- **time_ago**: A numeric variable giving the approximate minutes the post was up upon me viewing it (recorded in minutes).
+- **page_type**: A character variable describing the type of page that posted in my newsfeed.
+
+
+Which can be read in as follows:
+
+```{r}
+facebook <- read_csv("https://raw.githubusercontent.com/URstats/stat209-s18-dominickweakley/master/facebookpost.csv")
+facebook
+```
+
+## Exploratory Analysis
+
+The relationship I want to explore in my analysis is the factors of a popular Facebook post.  These factors include what time it was posted, type of media, who posted it.  The graph below shows the relationship between the number of likes on the post and the page_type.    
+
+```{r, echo=FALSE}
+ggplot(facebook,aes(page_type, likes))+
+  geom_point(aes(color = page_type)) +
+  annotate("text", x = 3, y = 55000, label = "Linkin Park Post")
+  
+
+```
+The data shows us that one band I follow (Linkin Park) is an anomaly receiving a lot more likes than any other type of post in my newsfeed.  Sports, in general, come next with sports leagues and sports teams getting around 20000 likes.  Friends tend to fall behind hovering just above the zero line along with ads.  It is safe to conclude that pages with the bigger potential audience are going to get more likes. 
+
+The next graph (below) further dives into what makes a post popular.  By changing the x-axis to the type of post we can see what type of media facebook pages are using to attract attention.   
+```{r}
+ggplot(facebook,aes(type, likes))+
+  geom_point(aes(color = page_type)) 
+```
+The graph shows that when a page or person posts a photo they receive more likes. This probably due to a photo's ability to catch the eye of its audience with flashy images.   Consequently, writing, on the other hand, is the least popular.
+
+
+My final graph will highlight the last and  most vital factor in the popularity of a Facebook post.  The time at which something is posted.  In order to ensure the largest audience, pages and people will post during times of the day they believe people are most active on Facebook.
+```{r}
+ggplot(facebook, aes(time_ago, likes))+
+  geom_point(aes(color = who))
+annotate("rect", ae)
+```
+When I started to collect my data collecting for the project I recorded the time to be 9:30 pm.  Based on my start time and data time collected I can conclude that around 2 pm and 8 pm are the best times to post in order to get likes.  These are the times other Facebook users seem to be most active. I believe times are so popular due to a majority of users getting off class or work at these times.   
+
+
+## Conclusion
+
+My research provided an immense amount of data on the factors that contribute to a popular Facebook post.  Based on my research I can conclude that a page with broad appeal, who utilizes photos and visual media, and knows what time to post will be the most successful.  This also bodes well for anybody who wants to add to the popularity of their posts by posting around 2 pm and 8 pm.  Overall I conclude that yes there are pages that will always get more likes on average than others.  But by correctly utilizing time and type of media anyone can boost there likes. 
+
+## References
+
+All data collected was taken from Facebook.com
+
+
+Wallace, Kelly. “Teens Spend 9 Hours a Day Using Media, Report Says.” CNN, Cable News Network, 3 Nov. 2015, www.cnn.com/2015/11/03/health/teens-tweens-media-screen-use-report/index.html.
+
+
+
