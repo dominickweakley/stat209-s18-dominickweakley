@@ -1,0 +1,75 @@
+---
+title: "The Presidental Tweets"
+author: "Dominick Weakley"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(out.width = "100%")
+knitr::opts_chunk$set(dpi = 300)
+
+library(readr)
+library(ggplot2)
+library(dplyr)
+library(ggmap)
+library(viridis)
+library(forcats)
+library(smodels)
+```
+
+```{r echo=FALSE}
+```
+## Introduction
+President Trump has quickly become one of the most polarizing figures in American political history.  His anti-establishment messages and rhetoric have contributed greatly to this. I wanted to take a more in-depth look at one of his greatest tools, Twitter. President Trump has utilized social media to enhance his message and connect with the American people like no other President has.  I will be examining his most recent 100 tweets, I recorded the number of likes, issue matter, and the number of words written in ALL CAPS for each tweet.  I will analyze the relationships the variables have in the dataset. I believe that the linear relationship between likes and all capital words will be positive.  I also predict that issues like guns and fake news will yield the highest amount of likes for the President.  Lastly, tweets dealing with Fake news will contain the most all capital words as President Trump tends to exaggerate his rhetoric when discussing this issue.        
+
+## Methods
+When collecting the data set I chose to use his most recent 100 tweets on his official Twitter page.  I recorded the number of likes each tweet got in the thousands, the number of words the President used ALL CAPS for when tweeting, and I recorded the issue the tweet was addressing.  The possible issues are economy, misc (miscellaneous), fake news, trade, government, international, immigration, and guns.  The first model I will be using examines the relationship between likes and issues.  The second model will analyze the relationship between the issue type and the number of likes the tweet received.  The final model will be a regression table analyzing the relationship between the two numeric variables, the number likes and usage of all capital letters for each tweet.   
+```{r}
+twitter <- read_csv("https://raw.githubusercontent.com/URstats/stat209-s18-dominickweakley/master/Twitter%20-%20Sheet1-2.csv")
+
+```
+
+## Results
+```{r}
+model <- lm_basic(likes ~ 1 + issue, data = twitter)
+reg_table(model, level = .95)
+twitter2 <- add_prediction(twitter, model)
+qplot(issue, model_pred, data = twitter2) + geom_smooth(method = "lm")+
+  geom_point(aes(color = issue)) +
+  xlab("Issues") +
+  ylab("Mean of Likes (thousands)")
+```
+This model uses the economy as the baseline issue. The baseline average number of likes for the baseline tweet is 80.91 thousand likes.  Tweets that dealt with the topic of guns garnered the most likes with an average of 138 thousand likes.  All the other issues are not statistically significant.  Economic issues generally got the least amount of likes.
+
+
+```{r}
+model <- lm_basic(caps ~ 1 + issue, data = twitter)
+reg_table(model, level = .95)
+twitter3 <- add_prediction(twitter, model)
+qplot(issue, model_pred, data = twitter3) + geom_smooth(method = "lm")+
+  geom_point(aes(color = issue)) +
+  xlab("Issues") +
+  ylab("Mean of Words with All Caps")
+```
+Similar to the last model, this model uses the economy as the baseline.  Tweets that related to the issue of guns saw the highest mean use of all capital words with 7.5 all capital words per tweet.  The issues that have statistical significance to the baseline (economy) are trade, misc, guns, and fake news.  Tweets concerning trade or miscellaneous issues received the lowest mean of words in all caps.
+
+
+```{r}
+model <- lm_basic(likes ~ 1 + caps, data = twitter)
+reg_table(model, level = .95)
+
+qplot(caps, likes, data = twitter) + geom_smooth(method = "lm") +
+xlab("Number of Words with All Caps") +
+ylab("Number of Likes (thousands)")
+```
+The linear regression shows a positive linear relationship between the number of likes and number of words in all caps.  The slope of the model is an increase of 5.05 thousand likes per 1 word in all capital letters. The number of all capital words is statistically significant.        
+
+## Conclusions
+To conclude the three hypothesis test yielded three very interesting results.  The first test results showed that the issues in which President Trump gets the most likes and the only significant statistical issue is Guns.  President Trump received an average 138 thousand likes on every gun related tweet.  That is an average of 57.1 thousand more likes. I expected that guns would be one of the most liked issues, but I did not know the gap was so large compared to the other issues.  The second test compared the issue type with the number of words tweeted in all capital letters.  The results showed that Guns once again is a significant statistical issue with the largest slope of 5.6.  Other statistically significant issues included fake news, trade, and misc issues.  While I predicted that Guns once again would be the dominant issue, I am surprised the all-caps words used in fake news tweets are so low (.56 words).  The final hypothesis test I conducted revealed a positive relationship between the number of likes and number of all capital words.  The slope increases at 5.05 thousand likes per 1 capital word.  The result is significant as the predicted means in the confidence interval are both positive.  I expected this result since when President Trump uses all capital words his tweets appear on more news channels and outlets.  President Trump knowledge and use of social media have revolutionized the communication line between the President and American people.  With every exaggerated capital word, President Trump becomes more of a permanent fixture in our social media and daily lives.         
+
+
+## References
+https://twitter.com/realdonaldtrump
