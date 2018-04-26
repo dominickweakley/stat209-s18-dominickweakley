@@ -1,0 +1,116 @@
+---
+title: "The Impact of Tobacco"
+author: "Dominick Weakley"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(out.width = "100%")
+knitr::opts_chunk$set(dpi = 300)
+
+library(readr)
+library(ggplot2)
+library(dplyr)
+library(ggmap)
+library(viridis)
+library(forcats)
+library(smodels)
+```
+  Tobacco and lung cancer have long been linked to the melancholy death of over 70,000 men per year(CDC).  There's no doubt that while cigarette smoking among men has significantly lowered over the past couple decades, cigarettes hold a deadly grip on many Americans today.  Anti-smoking campaigns like "Truth Initiative", suggest that tobacco companies target specific demographics when advertising cigarettes.  These demographics are rural low-income males in the southern United States.  Tabacco companies have been known to spend more advertising money in low-income counties.  In the past tobacco companies issued coupons in food stamps and gave out free cigarettes to children in public housing (Truth Initiative).  As a result of these low-income southern counties, have some of the highest rates of lung cancer in the United States among men.  The poverty stricken have become victims of a spike in lung cancer, due to the advertising tactics and increased investment of the tobacco industry.
+  
+```{r echo=FALSE}
+```
+
+```{r}
+cancer <- read_csv("https://statsmaths.github.io/stat_data/cancer_inc_data.csv")
+```
+
+```{r}
+cancer_ky <- filter(cancer, state == "ky")
+cancer_wv <- filter(cancer, state == "wv")
+cancer_ms <- filter(cancer, state == "ms")
+combine_cancer <- rbind(cancer_ky, cancer_ms, cancer_wv)
+
+
+```
+
+
+
+
+
+```{r}
+qmplot(lon, lat, data = combine_cancer, geom = "blank") +
+  geom_point(aes(color = (lung), alpa = 0.1)) +
+  scale_color_viridis()+
+  labs(color = "Lung Cancer Incidence Rate (100,000 Men over 18)")
+
+```
+
+```{r}
+qmplot(lon, lat, data = combine_cancer, geom = "blank") +
+  geom_point(aes(color = (poverty), alpa = 0.1)) +
+  scale_color_viridis() +
+  labs(color = "Percentage of Households below the Poverty Line")
+```
+  Gallup reports that the states of Kentucky, West Virginia, and Mississippi posted the highest smoking rates in the United States.  It is no surprise that these states are geographically considered the south.  The counties within these states, however, are geographically polarized when it comes to poverty and lung cancer rates.  In each of the three states, rural counties contain the highest rates of poverty and in most cases lung cancer as well.  In the southwestern area of West Virginia, the highest lung cancer and poverty rates are reported, it is no surprise that in Kentucky, the state that posted the highest smoking rate (30.2%), both the epicenter of poverty and lung cancer rates in the southeastern part of the state.  Tobacco companies are known to advertise to rural teens with images of cowboys and race cars knowing in these low-income areas people are less exposed to anti-smoking ads on television (CDC).  With both sets of counties geographically close and in poverty-stricken rural areas, heavy advertising by tobacco companies should not come as a surprise.  Mississippi however, proves to be an anomaly as its poverty rates are extremely high, but lung cancer rates are not.  
+
+   I want to take a deeper look at the counties affected by lung cancer and poverty in these states.  More specifically I want to focus on the rates of poverty in these counties.  The mean poverty rates of the counties in the three states are some of the highest in the country.  Thus the lung cancer and smoking rates can be directly linked to this.   
+```{r}
+model <- lm_basic(poverty ~ 1 + state, data = combine_cancer) 
+reg_table(model)
+```
+
+```{r}
+ggplot(combine_cancer, aes(state, poverty)) +
+  geom_point() +
+  annotate("text", x = 1.25, y = 21.061,
+           label = "21.061") +
+    annotate("text", x = 2.25, y = 24.129,
+           label = "24.129") +
+    annotate("text",x= 3.25, y = 19.547,
+           label = "19.547") +
+  annotate("rect", xmin = .85, xmax = 1.15,
+                   ymin = 41, ymax = 44.5,
+                   fill = "purple", alpha = 0.1) +
+  annotate("text",x= 1, y = 40,
+           label = "Clay County") +
+  xlab("State Abreviations") +
+  ylab("Percentage of Households below the Poverty Line")
+
+```
+   While Mississippi posted the highest mean poverty rate, Clay county in Kentucky has the highest percentage of households below the poverty line with 42.8%.  Using Clay county I compared it to the 15 counties with the highest lung cancer rates in MS, KY, and WV.  Clay county surprisingly had one of the lowest lung cancer rates among the counties with the highest rates. Clay County, however, is not the only county that does not fit the relationship.  Five other counties ranged outside the positive correlation between increased lung cancer and poverty rates.  I believe this is a result of extreme poverty however as the spread of lung cancer cannot and will not always equalize the extreme rates of poverty, due to the small nature of randomness of the disease.  Regardless of the five outliers, an overwhelming majority of counties follow the trend of high poverty rates and high lung cancer rates.  Thousands of Americans in these rural counties are directly affected by the positive correlation between poverty and lung cancer.  If tobacco companies continue their current advertising strategies more Americans will suffer the consequences.   
+
+
+
+
+
+```{r}
+top_lung <- filter(combine_cancer, lung >= 118.3)
+top_lung
+
+```
+
+
+
+```{r}
+qplot(lung, poverty, data = top_lung) + geom_smooth(method = "lm") +
+xlab("Incidence Rate per 100,000 Men over 18 years old") +
+ylab("Percentage of Households below the Poverty Line") +
+  geom_point(aes(color = name))
+  
+
+```
+  The tobacco industry has long controlled the lives of countless Americans and while their grip is weakening, their impact is prevalent.  Through the targeting of low-income counties, tobacco companies have directly impacted the health of poverty-stricken southerners.  The outrageously high lung cancer rates in poor southern counties, show the devastating impact of ruthless tobacco campaigning.  
+  
+  
+## Sources
+https://www.cdc.gov/tobacco/disparities/geographic/index.htm
+
+https://truthinitiative.org/news/why-are-72-percent-smokers-lower-income-communities
+
+http://news.gallup.com/poll/167771/smoking-rate-lowest-utah-highest-kentucky.aspx
+
+
